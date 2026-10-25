@@ -139,8 +139,6 @@ export const pandoc = async (input: PandocInput, output: PandocOutput, extraPara
     if (input.metadataFile) args.push('--metadata-file', input.metadataFile);
     // Extra parameters
     if (extraParams) {
-//        extraParams = extraParams.flatMap(x => x.split(' ')).filter(x => x.length);
-
           extraParams = extraParams.flatMap(value => {
               const argumentsList: string[] = [];
               let current = '';
