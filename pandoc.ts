@@ -139,7 +139,39 @@ export const pandoc = async (input: PandocInput, output: PandocOutput, extraPara
     if (input.metadataFile) args.push('--metadata-file', input.metadataFile);
     // Extra parameters
     if (extraParams) {
-        extraParams = extraParams.flatMap(x => x.split(' ')).filter(x => x.length);
+//        extraParams = extraParams.flatMap(x => x.split(' ')).filter(x => x.length);
+
+          extraParams = extraParams.flatMap(value => {
+              const argumentsList: string[] = [];
+              let current = '';
+              let quote: string | null = null;
+              let started = false;
+          
+              for (const char of value) {
+                  if (char === '"' || char === "'") {
+                      if (quote === char) {
+                          quote = null;
+                      } else if (quote === null) {
+                          quote = char;
+                      } else {
+                          current += char;
+                      }
+                      started = true;
+                  } else if (/\s/.test(char) && quote === null) {
+                      if (started) {
+                          argumentsList.push(current);
+                          current = '';
+                          started = false;
+                      }
+                  } else {
+                      current += char;
+                      started = true;
+                  }
+              }
+          
+              if (started) argumentsList.push(current);
+              return argumentsList;
+        });
         args.push(...extraParams);
     }
 
